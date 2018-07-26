@@ -1,4 +1,8 @@
 $('.page').append('<div class="pagination"><ul></ul></div>');
+$('.page-header').append(`<div class="student-search">
+                            <input type="text">
+                            <button id="searchButton" type="submit">Search</button>
+                          </div>`);
 
 /*=============-=============-=============-=============
                       CACHED VARIABLES
@@ -27,11 +31,11 @@ function createPaginationButtons($list, pages, currentPage) {
   // only create buttons if there is more than one page of students
   if(pages.length > 1) {
     for(let i = 1; i <= pages.length; i++) {
-        if (i === currentPage) { // the current page is given the class 'active'
-            buttons += `<li><a class="active" href="#">${i}</a></li>`;
-        } else {
-            buttons += `<li><a href="#">${i}</a></li>`;
-        }
+      if (i === currentPage) { // the current page is given the class 'active'
+          buttons += `<li><a class="active" href="#">${i}</a></li>`;
+      } else {
+          buttons += `<li><a href="#">${i}</a></li>`;
+      }
     }
   }
   $paginationUl.html(buttons);
@@ -57,3 +61,8 @@ function showPage($list, currentPage = 1) { // currentPage parameter has default
 ===============-=============-=============-===========*/
 
 showPage($studentList);
+
+/*=============-=============-=============-=============
+                    EVENT LISTENERS
+===============-=============-=============-===========*/
+
