@@ -1,3 +1,4 @@
+// Unobtrusive JavaScript used to append HTML for pagination and search bar
 $('.page').append('<div class="pagination"><ul></ul></div>');
 $('.page-header').append(`<div class="student-search">
                             <input type="text">
@@ -9,15 +10,17 @@ $('.page-header').append(`<div class="student-search">
 ===============-=============-=============-===========*/
 const $studentList = $('.student-item');
 const $paginationUl = $('.pagination ul');
+const $searchInput = $('.student-search input');
+const $searchButton = $('#searchButton');
 
 /*=============-=============-=============-=============
                         FUNCTIONS
 ===============-=============-=============-===========*/
 
-// split a copy of the $studentList into an array of paginated students
-function paginate($list) {
+// split a copy of the student list into an array of paginated students
+function paginate(list) {
   // copy jQuery collection to avoid manipulating the original list of students
-  const arrCopy = [...$list]; // use spread operator to make copy 
+  const arrCopy = [...list]; // use spread operator to make copy 
   const newArr = [];
   // using splice method, while loop will end when arrCopy is empty
   while(arrCopy.length) {
@@ -26,7 +29,7 @@ function paginate($list) {
   return newArr;
 }
 
-function createPaginationButtons($list, pages, currentPage) {
+function createPaginationButtons(list, pages, currentPage) {
   let buttons = '';
   // only create buttons if there is more than one page of students
   if(pages.length > 1) {
@@ -44,16 +47,29 @@ function createPaginationButtons($list, pages, currentPage) {
   $('.pagination li').on('click', event => {
     // when button is clicked, it's parsed text number determines the displayed current page
     const currentPage = parseInt(event.target.textContent);
-    showPage($list, currentPage);
+    showPage(list, currentPage);
   });
 }
 
 // function displays the current paginated page
-function showPage($list, currentPage = 1) { // currentPage parameter has default value of 1;
-  const pages = paginate($list);
-  createPaginationButtons($list, pages, currentPage);
-  $list.hide();
+function showPage(list, currentPage = 1) { // currentPage parameter has default value of 1;
+  const pages = paginate(list);
+  createPaginationButtons(list, pages, currentPage);
+  $studentList.hide();
   $(pages[currentPage - 1]).show(); // currentPage - 1 to match index numbers in pages array
+}
+
+function filterList() {
+  const value = $searchInput.val().toLowerCase().trim();
+  // a student is included in the filtered array 
+  // if the input value is found in that student's name or email
+  const $filteredList = $studentList.filter(function() {
+      const name = $(this).find('h3').text();
+      const email = $(this).find('.email').text();
+      return name.indexOf(value) !== -1 || email.indexOf(value) !== -1;
+  });
+
+  showPage($filteredList);
 }
 
 /*=============-=============-=============-=============
@@ -65,4 +81,5 @@ showPage($studentList);
 /*=============-=============-=============-=============
                     EVENT LISTENERS
 ===============-=============-=============-===========*/
-
+// filterList() is fired every time a letter is entered into the search input
+$searchInput.on('keyup', filterList);
