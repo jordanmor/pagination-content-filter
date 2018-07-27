@@ -77,11 +77,13 @@ function showPage(list, currentPage = 1) { // currentPage parameter has default 
   $(pages[currentPage - 1]).show(); // currentPage - 1 to match index numbers in pages array
 }
 
-function filterList() {
+function filterList(event) {
   const value = $searchInput.val().toLowerCase().trim();
-
-  // a student is included in the filtered array 
-  // if the input value is found in that student's name or email
+  // input value is only emptied when event target is the clicked search button
+  if(event.target.tagName === 'BUTTON') {
+    $searchInput.val('');
+  }
+  // student included in filtered array if input value found in that student's name or email
   const $filteredList = $studentList.filter(function() {
     const name = $(this).find('h3').text();
     const email = $(this).find('.email').text();
@@ -103,3 +105,5 @@ showPage($studentList);
 ===============-=============-=============-===========*/
 // filterList() is fired every time a letter is entered into the search input
 $searchInput.on('keyup', filterList);
+
+$searchButton.on('click', filterList);
