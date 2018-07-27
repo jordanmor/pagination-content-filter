@@ -53,6 +53,12 @@ function createPaginationButtons(list, pages, currentPage) {
 
 // function displays the current paginated page
 function showPage(list, currentPage = 1) { // currentPage parameter has default value of 1;
+  // display html message if there are no students in list
+  if(!list.length) {
+    $('.page-header h2').text('No Students Found');
+  } else {
+      $('.page-header h2').text('Students');
+  }
   const pages = paginate(list);
   createPaginationButtons(list, pages, currentPage);
   $studentList.hide();
