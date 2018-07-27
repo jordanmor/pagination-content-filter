@@ -13,6 +13,7 @@ const $paginationUl = $('.pagination ul');
 const $searchInput = $('.student-search input');
 const $searchButton = $('#searchButton');
 
+let filtered = false;
 /*=============-=============-=============-=============
                         FUNCTIONS
 ===============-=============-=============-===========*/
@@ -35,19 +36,29 @@ function createPaginationButtons(list, pages, currentPage) {
   if(pages.length > 1) {
     for(let i = 1; i <= pages.length; i++) {
       if (i === currentPage) { // the current page is given the class 'active'
-          buttons += `<li><a class="active" href="#">${i}</a></li>`;
+        buttons += `<li><a class="active" href="#">${i}</a></li>`;
       } else {
-          buttons += `<li><a href="#">${i}</a></li>`;
+        buttons += `<li><a href="#">${i}</a></li>`;
       }
     }
   }
   $paginationUl.html(buttons);
 
+  // the filtered variable helps determine if the show all button is displayed
+  if (filtered) {
+    $paginationUl.append(`<li><a class="show-all">Show All</a></li>`);
+  }
   // Event Listener
   $('.pagination li').on('click', event => {
     // when button is clicked, it's parsed text number determines the displayed current page
     const currentPage = parseInt(event.target.textContent);
     showPage(list, currentPage);
+  });
+  // clicking show all button clears input and resets page to show unfiltered paginated student list
+  $('.show-all').on('click', () => {
+    $searchInput.val('');
+    filtered = false;
+    showPage($studentList);
   });
 }
 
@@ -59,6 +70,7 @@ function showPage(list, currentPage = 1) { // currentPage parameter has default 
   } else {
       $('.page-header h2').text('Students');
   }
+
   const pages = paginate(list);
   createPaginationButtons(list, pages, currentPage);
   $studentList.hide();
@@ -67,14 +79,16 @@ function showPage(list, currentPage = 1) { // currentPage parameter has default 
 
 function filterList() {
   const value = $searchInput.val().toLowerCase().trim();
+
   // a student is included in the filtered array 
   // if the input value is found in that student's name or email
   const $filteredList = $studentList.filter(function() {
-      const name = $(this).find('h3').text();
-      const email = $(this).find('.email').text();
-      return name.indexOf(value) !== -1 || email.indexOf(value) !== -1;
+    const name = $(this).find('h3').text();
+    const email = $(this).find('.email').text();
+    return name.indexOf(value) !== -1 || email.indexOf(value) !== -1;
   });
 
+  filtered = true;
   showPage($filteredList);
 }
 
